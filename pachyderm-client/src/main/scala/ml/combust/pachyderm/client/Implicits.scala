@@ -1,6 +1,7 @@
 package ml.combust.pachyderm.client
 
 import pfs.pfs.Repo
+import pps.pps.Pipeline
 
 import scala.language.implicitConversions
 
@@ -9,5 +10,6 @@ import scala.language.implicitConversions
   */
 trait Implicits {
   implicit def pachydermStringToRepo(name: String): Repo = Repo(name = name)
+  implicit def pachydermStringToPipeline(name: String): Pipeline = Pipeline(name = name)
 }
 object Implicits extends Implicits

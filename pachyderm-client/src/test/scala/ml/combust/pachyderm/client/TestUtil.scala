@@ -14,17 +14,4 @@ object TestUtil {
   }
 
   def port: Int = 30650
-
-  def clearRepos(client: Client)
-                (implicit ec: ExecutionContext): Future[Any] = {
-    client.listRepo().flatMap {
-      infos =>
-        val deletes = infos.repoInfo.map {
-          info =>
-            client.deleteRepo(info.repo.get)
-        }
-
-        Future.sequence(deletes)
-    }
-  }
 }

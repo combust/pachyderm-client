@@ -9,7 +9,7 @@ object Dependencies {
   object Compile {
     val grpc = "io.grpc" % "grpc-netty" % "1.0.3"
     val scalaPbRuntimeRpc = "com.trueaccord.scalapb" %% "scalapb-runtime-grpc" % com.trueaccord.scalapb.compiler.Version.scalapbVersion
-    val nettySsl = "com.floragunn" % "netty-tcnative-openssl-static-sg" % "1.1.33.Fork19"
+    val sprayJson = "io.spray" %% "spray-json" % "1.3.3"
   }
 
   object Test {
@@ -23,5 +23,5 @@ object Dependencies {
   import Compile._
   val l = libraryDependencies
 
-  lazy val client = l ++= Seq(nettySsl, grpc, scalaPbRuntimeRpc, Protobuf.scalaPbRuntime, Test.scalaTest)
+  lazy val client = l ++= Seq(grpc, scalaPbRuntimeRpc, Protobuf.scalaPbRuntime, sprayJson, Test.scalaTest)
 }
