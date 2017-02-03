@@ -12,7 +12,8 @@ object Common {
   lazy val buildSettings: Seq[Def.Setting[_]] = Seq(
     scalaVersion := "2.11.8",
     crossScalaVersions := Seq("2.11.8", "2.12.1"),
-    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
+    organization := "ml.combust.pachyderm"
   )
 
   lazy val sonatypeSettings: Seq[Def.Setting[_]] = Seq(
