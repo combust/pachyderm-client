@@ -36,11 +36,22 @@ Releases are hosted on Maven Central, which is a default SBT resolver.
 libraryDependencies ++= "ml.combust.pachyderm" %% "pachyderm-client" % "0.1.0"
 ```
 
-## Basic Usage
+## Running Tests
 
 To test locally, follow the [instruction](http://pachyderm.readthedocs.io/en/stable/getting_started/local_installation.html) for getting a local Pachyderm
 cluster running. After you have Pachyderm running locally, make sure you
-have port forwarding enabled.
+have port forwarding enabled. The tests will use a shell to determine
+the host IP for Pachyderm and uses a hardcoded port of 30650.
+
+```bash
+sbt pachyderm-client/test
+```
+
+## Basic Usage
+
+Make sure you can run the tests using the instructions in the previous
+section.
+
 
 ```bash
 pachctl port-forward &
