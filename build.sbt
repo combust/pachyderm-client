@@ -1,4 +1,4 @@
-import ml.combust.pachyderm.{Dependencies, Modules}
+import ml.combust.pachyderm.Modules
 
 lazy val root = Modules.root
 lazy val `pachyderm-client` = Modules.`pachyderm-client`

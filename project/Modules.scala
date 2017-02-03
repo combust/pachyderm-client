@@ -8,7 +8,7 @@ object Modules {
     `pachyderm-client`
   )
 
-  lazy val rootSettings = Common.defaultSettings
+  lazy val rootSettings = Common.defaultSettings ++ Seq(publishArtifact := false)
   lazy val `root` = Project(
     id = "pachyderm-client-root",
     base = file("."),
