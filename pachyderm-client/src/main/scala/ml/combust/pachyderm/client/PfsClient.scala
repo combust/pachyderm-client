@@ -201,6 +201,24 @@ class PfsClient(channel: _root_.io.grpc.Channel,
         fullFile = fullFile))))
   }
 
+  def deleteFile(commit: Commit,
+                 path: String): Future[Empty] = {
+    deleteFile(DeleteFileRequest(file = Some(File(Some(commit), path))))
+  }
+
+  def listFile(commit: Commit,
+               path: String,
+               shard: Option[Shard] = None,
+               fromCommitId: Option[String] = None,
+               fullFile: Boolean = true,
+               mode: ListFileMode = ListFileMode.ListFile_NORMAL): Future[FileInfos] = {
+    listFile(ListFileRequest(file = Some(File(Some(commit), path)),
+      shard = shard,
+      diffMethod = Some(DiffMethod(Some(Commit(commit.repo, fromCommitId.getOrElse(""))),
+        fullFile = fullFile)),
+      mode = mode))
+  }
+
   def deleteAll(): Future[Empty] = {
     deleteAll(Empty.defaultInstance)
   }
