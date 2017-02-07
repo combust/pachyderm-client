@@ -2,6 +2,7 @@ package ml.combust.pachyderm.client
 
 import com.google.protobuf.empty.Empty
 import io.grpc.ManagedChannelBuilder
+import pfs.pfs.Commit
 import pps.pps.APIGrpc.APIStub
 import pps.pps._
 
@@ -61,6 +62,40 @@ class PpsClient(channel: _root_.io.grpc.Channel,
 
   def stopPipeline(pipeline: Pipeline): Future[Empty] = {
     stopPipeline(StopPipelineRequest(pipeline = Some(pipeline)))
+  }
+
+  def createJob(pipeline: Pipeline,
+                transform: Transform,
+                parallelismSpec: Option[ParallelismSpec] = None,
+                parentJob: Option[Job] = None,
+                inputs: Seq[JobInput] = Seq(),
+                output: Option[Output] = None,
+                gcPolicy: Option[GCPolicy] = None,
+                force: Boolean = false,
+                service: Option[Service] = None): Future[Job] = {
+    createJob(CreateJobRequest(pipeline = Some(pipeline),
+      transform = Some(transform),
+      parentJob = parentJob,
+      inputs = inputs,
+      parallelismSpec = parallelismSpec,
+      output = output,
+      force = force,
+      service = service))
+  }
+
+  def deleteJob(job: Job): Future[Empty] = {
+    deleteJob(DeleteJobRequest(job = Some(job)))
+  }
+
+  def inspectJob(job: Job,
+                 blockState: Boolean = false): Future[JobInfo] = {
+    inspectJob(InspectJobRequest(job = Some(job), blockState = blockState))
+  }
+
+  def listJob(pipeline: Pipeline,
+              inputCommits: Seq[Commit]): Future[JobInfos] = {
+    listJob(ListJobRequest(pipeline = Some(pipeline),
+      inputCommit = inputCommits))
   }
 
   def deleteAll(): Future[Empty] = {
