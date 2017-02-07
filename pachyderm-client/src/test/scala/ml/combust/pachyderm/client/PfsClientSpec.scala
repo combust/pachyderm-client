@@ -132,8 +132,8 @@ class PfsClientSpec extends FunSpec
       }
     }
 
-    describe("getting a file from a commit") {
-      it("gets the contents of the file from the commit") {
+    describe("getting a file and listing files for a commit") {
+      it("gets the contents of the file from the commit and lists it") {
         whenReady(client.deleteAll()) {
           _ => whenReady(client.createRepo(testRepo)) {
             _ => whenReady(client.startCommit(testRepo, "master")) {
@@ -149,8 +149,13 @@ class PfsClientSpec extends FunSpec
                         info =>
                           val out = new ByteArrayOutputStream()
                           whenReady(client.getFullFile(testRepo, "master", "test.txt", out)) {
-                            _ =>
-                              assert(out.toByteArray sameElements Files.readAllBytes(FileSystems.getDefault.getPath(file.getAbsolutePath)))
+                            _ => assert(out.toByteArray sameElements Files.readAllBytes(FileSystems.getDefault.getPath(file.getAbsolutePath)))
+                          }
+
+                          whenReady(client.listFile(testRepo, "master", "/")) {
+                            infos =>
+                              assert(infos.fileInfo.size == 1)
+                              assert(infos.fileInfo.head.file.get.path == "/test.txt")
                           }
                       }
                   }
