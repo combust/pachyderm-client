@@ -50,9 +50,10 @@ class PfsClient(channel: _root_.io.grpc.Channel,
     inspectRepo(InspectRepoRequest(repo = Some(repo)))
   }
 
-  def startCommit(parent: Option[Commit] = None,
+  def startCommit(repo: Repo,
+                  parentId: String,
                   provenance: Seq[Commit] = Seq()): Future[Commit] = {
-    startCommit(StartCommitRequest(parent = parent, provenance = provenance))
+    startCommit(StartCommitRequest(parent = Some(Commit(Some(repo), parentId)), provenance = provenance))
   }
 
   def finishCommit(commit: Commit, cancel: Boolean = false): Future[Empty] = {
@@ -72,10 +73,11 @@ class PfsClient(channel: _root_.io.grpc.Channel,
     deleteCommit(DeleteCommitRequest(commit = Some(commit)))
   }
 
-  def forkCommit(parent: Commit,
+  def forkCommit(repo: Repo,
+                 parentId: String,
                  branch: String,
                  provenance: Seq[Commit] = Seq()): Future[Commit] = {
-    forkCommit(ForkCommitRequest(parent = Some(parent),
+    forkCommit(ForkCommitRequest(parent = Some(Commit(Some(repo), parentId)),
       branch = branch,
       provenance = provenance))
   }
@@ -151,15 +153,17 @@ class PfsClient(channel: _root_.io.grpc.Channel,
       delimiter = delimiter,
       url = url.getOrElse(""),
       recursive = recursive))
+    observer.onCompleted()
 
     promise.future
   }
 
-  def getFullFile(commit: Commit,
+  def getFullFile(repo: Repo,
+                  commitId: String,
                   path: String,
                   out: OutputStream): Future[Empty] = {
-    getFile(commit,
-      path,
+    getFile(commit = Commit(Some(repo), commitId),
+      path = path,
       out = out)
   }
 
@@ -176,7 +180,7 @@ class PfsClient(channel: _root_.io.grpc.Channel,
       override def onError(t: Throwable): Unit = promise.failure(t)
       override def onCompleted(): Unit = promise.success(Empty.defaultInstance)
       override def onNext(value: com.google.protobuf.wrappers.BytesValue): Unit = {
-        out.write(value.toByteArray)
+        out.write(value.value.toByteArray)
       }
     }
 
@@ -184,7 +188,7 @@ class PfsClient(channel: _root_.io.grpc.Channel,
       offsetBytes = offsetBytes,
       sizeBytes = sizeBytes,
       shard = shard,
-      diffMethod = Some(DiffMethod(Some(Commit(commit.repo, fromCommitId.getOrElse(""))),
+      diffMethod = Some(DiffMethod(fromCommitId.map(fci => Commit(commit.repo, fci)),
         fullFile = fullFile))), responseObserver)
 
     promise.future
